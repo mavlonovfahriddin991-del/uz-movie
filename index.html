@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>UZ Movie</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --card: #13131a;
+    --card2: #1c1c26;
+    --accent: #e63946;
+    --accent2: #ff6b35;
+    --gold: #ffd60a;
+    --text: #f0f0f5;
+    --muted: #7a7a8e;
+    --radius: 14px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; overflow-x: hidden; }
+
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,15,0.97); backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 0 16px; height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { font-family: 'Bebas Neue', cursive; font-size: 26px; letter-spacing: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .logo span { -webkit-text-fill-color: var(--gold); }
+  .icon-btn { background: none; border: none; color: var(--text); cursor: pointer; font-size: 20px; padding: 4px; }
+  .header-icons { display: flex; gap: 16px; }
+
+  .search-bar { display: none; padding: 10px 16px; background: var(--card); border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .search-bar.active { display: block; }
+  .search-bar input { width: 100%; background: var(--card2); border: 1px solid rgba(255,255,255,0.08); border-radius: 30px; padding: 10px 18px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 14px; outline: none; }
+  .search-bar input::placeholder { color: var(--muted); }
+
+  .genres { display: flex; gap: 8px; padding: 14px 16px; overflow-x: auto; scrollbar-width: none; }
+  .genres::-webkit-scrollbar { display: none; }
+  .genre-chip { flex-shrink: 0; padding: 7px 16px; border-radius: 30px; background: var(--card2); border: 1px solid rgba(255,255,255,0.07); color: var(--muted); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .genre-chip.active, .genre-chip:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .hero { margin: 0 16px 20px; border-radius: var(--radius); overflow: hidden; position: relative; cursor: pointer; height: 210px; background: #111; }
+  .hero img { width: 100%; height: 100%; object-fit: cover; opacity: 0.55; }
+  .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,15,0.97) 0%, rgba(10,10,15,0.2) 60%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 18px; }
+  .hero-badge { display: inline-block; background: var(--accent); color: #fff; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; width: fit-content; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.55} }
+  .hero h2 { font-family: 'Bebas Neue', cursive; font-size: 28px; letter-spacing: 1px; line-height: 1; margin-bottom: 6px; }
+  .hero-meta { display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .star { color: var(--gold); }
+  .play-btn-hero { display: flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; border: none; border-radius: 30px; padding: 10px 22px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px; cursor: pointer; width: fit-content; }
+
+  .section { margin-bottom: 28px; }
+  .section-header { padding: 0 16px 12px; }
+  .section-title { font-family: 'Bebas Neue', cursive; font-size: 20px; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; }
+
+  .movies-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 16px; }
+  .movie-card { cursor: pointer; transition: transform 0.18s; }
+  .movie-card:active { transform: scale(0.95); }
+  .movie-thumb { width: 100%; height: 150px; border-radius: 10px; overflow: hidden; position: relative; background: var(--card2); margin-bottom: 7px; }
+  .movie-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+  .movie-card:hover .thumb-overlay, .movie-card:active .thumb-overlay { opacity: 1; }
+  .play-circle { width: 40px; height: 40px; background: rgba(230,57,70,0.92); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .genre-tag { position: absolute; top: 7px; left: 7px; background: rgba(230,57,70,0.88); color: #fff; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .genre-tag.drama { background: rgba(30,100,200,0.88); }
+  .genre-tag.fantastik { background: rgba(120,40,200,0.88); }
+  .movie-title { font-size: 11px; font-weight: 700; line-height: 1.3; color: var(--text); }
+
+  .modal-bg { display: none; position: fixed; inset: 0; z-index: 300; background: #000; flex-direction: column; animation: fadeIn 0.2s ease; }
+  .modal-bg.open { display: flex; }
+  @keyframes fadeIn { from{opacity:0}to{opacity:1} }
+  .modal-topbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(10,10,15,0.98); border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; }
+  .modal-close { background: var(--card2); border: none; color: var(--text); width: 34px; height: 34px; border-radius: 50%; font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .modal-topbar-title { font-family: 'Bebas Neue', cursive; font-size: 18px; letter-spacing: 1px; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 8px; }
+  .player-area { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: var(--bg); }
+  .yt-frame-wrap { width: 100%; background: #000; flex-shrink: 0; }
+  .yt-frame-wrap iframe { width: 100%; aspect-ratio: 16/9; border: none; display: block; }
+  .modal-info { padding: 14px 16px; }
+  .modal-info-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .modal-info-left { flex: 1; }
+  .modal-movie-title { font-family: 'Bebas Neue', cursive; font-size: 22px; letter-spacing: 1px; line-height: 1.1; margin-bottom: 6px; }
+  .modal-badge { display: inline-block; padding: 3px 11px; border-radius: 20px; background: var(--accent); color: #fff; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; }
+  .modal-badge.drama { background: #1e64c8; }
+  .modal-badge.fantastik { background: #7828c8; }
+  .btn-fav { background: var(--card2); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 8px 14px; font-size: 20px; cursor: pointer; flex-shrink: 0; }
+  .modal-desc { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 16px; }
+  .yt-open-row { display: flex; align-items: center; gap: 12px; background: var(--card2); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 12px 14px; cursor: pointer; transition: background 0.18s; text-decoration: none; margin-bottom: 6px; }
+  .yt-open-row:hover { background: rgba(255,0,0,0.12); border-color: rgba(255,0,0,0.3); }
+  .yt-logo { width: 40px; height: 40px; border-radius: 10px; background: #ff0000; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .yt-open-text { flex: 1; }
+  .yt-open-text strong { display: block; font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+  .yt-open-text span { font-size: 11px; color: var(--muted); }
+  .yt-arrow { font-size: 18px; color: var(--muted); }
+
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(13,13,20,0.97); backdrop-filter: blur(14px); border-top: 1px solid rgba(255,255,255,0.06); display: flex; height: 58px; z-index: 100; }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; border: none; background: none; color: var(--muted); font-size: 10px; font-family: 'Nunito', sans-serif; font-weight: 700; transition: color 0.2s; }
+  .nav-icon { font-size: 22px; }
+  .nav-item.active { color: var(--accent); }
+
+  main { padding-bottom: 70px; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .about-box { margin: 16px; background: var(--card); border-radius: var(--radius); padding: 24px; border: 1px solid rgba(255,255,255,0.06); text-align: center; }
+  .about-logo-big { font-family: 'Bebas Neue', cursive; font-size: 52px; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .about-stats { display: flex; justify-content: center; gap: 32px; margin-top: 16px; }
+  .stat-num { font-family: 'Bebas Neue', cursive; font-size: 30px; color: var(--accent); }
+  .stat-label { font-size: 11px; color: var(--muted); font-weight: 700; }
+
+  #noResults, #noFavs { display: none; text-align: center; color: var(--muted); padding: 40px 16px; font-size: 14px; line-height: 1.6; }
+
+  /* ADMIN */
+  .admin-overlay { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 20px; }
+  .admin-overlay.open { display: flex; }
+  .admin-box { background: var(--card); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; }
+  .admin-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .admin-header-title { font-family: 'Bebas Neue', cursive; font-size: 22px; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+  .admin-close { background: var(--card2); border: none; color: var(--text); width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .admin-body { padding: 18px; }
+  .admin-input-group { margin-bottom: 14px; }
+  .admin-label { display: block; font-size: 12px; font-weight: 800; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .admin-input, .admin-select, .admin-textarea { width: 100%; background: var(--card2); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 11px 14px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
+  .admin-input:focus, .admin-select:focus, .admin-textarea:focus { border-color: var(--accent); }
+  .admin-textarea { resize: vertical; min-height: 70px; }
+  .admin-select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%237a7a8e'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+  .admin-select option { background: var(--card2); color: var(--text); }
+  .admin-btn { width: 100%; padding: 13px; border: none; border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 15px; cursor: pointer; transition: all 0.2s; }
+  .admin-btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+  .admin-btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+  .admin-divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 18px 0; }
+  .admin-list-title { font-family: 'Bebas Neue', cursive; font-size: 18px; letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .admin-movie-item { display: flex; align-items: center; gap: 10px; background: var(--card2); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+  .admin-movie-thumb { width: 50px; height: 36px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: #000; }
+  .admin-movie-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .admin-movie-info { flex: 1; min-width: 0; }
+  .admin-movie-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .admin-movie-genre { font-size: 10px; color: var(--muted); font-weight: 700; }
+  .admin-movie-del { background: none; border: none; color: var(--accent); font-size: 18px; cursor: pointer; padding: 4px; flex-shrink: 0; opacity: 0.7; transition: opacity 0.2s; }
+  .admin-movie-del:hover { opacity: 1; }
+  .admin-logout { background: none; border: 1px solid rgba(255,255,255,0.08); color: var(--muted); border-radius: 8px; padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Nunito', sans-serif; }
+  .admin-logout:hover { color: var(--accent); border-color: rgba(230,57,70,0.3); }
+  .admin-toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--card2); color: var(--text); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px 20px; font-size: 13px; font-weight: 700; z-index: 600; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; }
+  .admin-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .admin-toast.success { border-color: rgba(0,200,100,0.3); color: #00c864; }
+  .admin-toast.error { border-color: rgba(230,57,70,0.3); color: var(--accent); }
+  .link-preview { margin-top: 6px; display: none; }
+  .link-preview.show { display: flex; align-items: center; gap: 10px; background: rgba(255,0,0,0.06); border: 1px solid rgba(255,0,0,0.15); border-radius: 10px; padding: 8px 12px; }
+  .link-preview img { width: 64px; height: 36px; border-radius: 6px; object-fit: cover; }
+  .link-preview-text { font-size: 12px; color: var(--muted); }
+  .link-preview-text strong { color: var(--text); display: block; font-size: 13px; margin-bottom: 2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">UZ<span>Movie</span></div>
+  <div class="header-icons">
+    <button class="icon-btn" onclick="toggleSearch()">🔍</button>
+    <button class="icon-btn" onclick="openAdmin()" title="Admin panel">🔒</button>
+  </div>
+</header>
+
+<div class="search-bar" id="searchBar">
+  <input type="text" placeholder="Kino qidiring..." id="searchInput" oninput="filterMovies(this.value)">
+</div>
+
+<main>
+  <div class="page active" id="page-home">
+    <div class="genres" id="genreBar"></div>
+    <div class="hero" id="heroSection" onclick="openMovie(0)">
+      <img id="heroImg" src="" alt="">
+      <div class="hero-overlay">
+        <div class="hero-badge">⭐ Tavsiya etiladi</div>
+        <h2 id="heroTitle"></h2>
+        <div class="hero-meta" id="heroMeta"></div>
+        <button class="play-btn-hero">▶ Ko'rish</button>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title"><span class="dot"></span> Barcha Kinolar</div>
+      </div>
+      <div class="movies-grid" id="moviesGrid"></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-search">
+    <div style="padding:16px">
+      <div style="font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:1px;margin-bottom:14px">🔍 Qidiruv</div>
+      <div class="movies-grid" id="searchGrid"></div>
+      <div id="noResults">Kino topilmadi 😢</div>
+    </div>
+  </div>
+
+  <div class="page" id="page-favorites">
+    <div style="padding:16px">
+      <div style="font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:1px;margin-bottom:14px">❤️ Sevimlilar</div>
+      <div class="movies-grid" id="favGrid"></div>
+      <div id="noFavs">Hali sevimlilar yo'q 💔<br><small>Kinolarga ♡ bosing</small></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-about">
+    <div class="about-box">
+      <div class="about-logo-big">UZ Movie</div>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;margin:8px 0 0">O'zbekiston kinolarining eng yaxshi platformasi.</p>
+      <div class="about-stats" id="aboutStats"></div>
+    </div>
+    <div style="padding:16px;font-size:13px;color:var(--muted);text-align:center;line-height:1.8">
+      <strong style="color:var(--text)">UZ Movie</strong> — O'zbek kinolarini sevuvchilar uchun maxsus yaratilgan mobil platforma.<br><br>
+      © 2024 UZ Movie. Barcha huquqlar himoyalangan.
+    </div>
+  </div>
+</main>
+
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="showPage('home',this)"><span class="nav-icon">🏠</span>Bosh sahifa</button>
+  <button class="nav-item" onclick="showPage('search',this);focusSearch()"><span class="nav-icon">🔍</span>Qidirish</button>
+  <button class="nav-item" onclick="showPage('favorites',this);loadFavs()"><span class="nav-icon">❤️</span>Sevimlilar</button>
+  <button class="nav-item" onclick="showPage('about',this)"><span class="nav-icon">ℹ️</span>Haqida</button>
+</nav>
+
+<!-- PLAYER MODAL -->
+<div class="modal-bg" id="movieModal">
+  <div class="modal-topbar">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-topbar-title" id="modalTopTitle"></div>
+    <div style="width:34px"></div>
+  </div>
+  <div class="player-area" id="playerArea">
+    <div class="yt-frame-wrap">
+      <iframe id="ytPlayer" src="" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <div class="modal-info">
+      <div class="modal-info-top">
+        <div class="modal-info-left">
+          <div class="modal-movie-title" id="modalMovieTitle"></div>
+          <div class="modal-badge" id="modalBadge"></div>
+        </div>
+        <button class="btn-fav" id="favBtn" onclick="toggleFav()">♡</button>
+      </div>
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="yt-open-row" onclick="openYoutube()">
+        <div class="yt-logo">▶</div>
+        <div class="yt-open-text">
+          <strong>YouTube'da Ko'rish</strong>
+          <span>To'liq ekranda, yuqori sifatda</span>
+        </div>
+        <div class="yt-arrow">›</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-box">
+    <div id="adminLogin">
+      <div class="admin-header">
+        <div class="admin-header-title">🔒 Admin Kirish</div>
+        <button class="admin-close" onclick="closeAdmin()">✕</button>
+      </div>
+      <div class="admin-body">
+        <div class="admin-input-group">
+          <label class="admin-label">Parol</label>
+          <input type="password" class="admin-input" id="adminPwInput" placeholder="Parolni kiriting..." onkeydown="if(event.key==='Enter')loginAdmin()">
+        </div>
+        <button class="admin-btn admin-btn-primary" onclick="loginAdmin()">Kirish</button>
+      </div>
+    </div>
+    <div id="adminDashboard" style="display:none">
+      <div class="admin-header">
+        <div class="admin-header-title">⚙️ Admin Panel</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="admin-logout" onclick="logoutAdmin()">Chiqish</button>
+          <button class="admin-close" onclick="closeAdmin()">✕</button>
+        </div>
+      </div>
+      <div class="admin-body">
+        <div class="admin-list-title"><span class="dot"></span> Yangi Kino Qo'shish</div>
+        <div class="admin-input-group">
+          <label class="admin-label">YouTube Link</label>
+          <input type="text" class="admin-input" id="adminYtLink" placeholder="https://youtu.be/..." oninput="previewLink(this.value)">
+          <div class="link-preview" id="linkPreview">
+            <img id="previewThumb" src="" alt="">
+            <div class="link-preview-text">
+              <strong id="previewStatus">✅ Link to'g'ri</strong>
+              <span id="previewId"></span>
+            </div>
+          </div>
+        </div>
+        <div class="admin-input-group">
+          <label class="admin-label">Kino Nomi</label>
+          <input type="text" class="admin-input" id="adminTitle" placeholder="Masalan: Shaytanat">
+        </div>
+        <div class="admin-input-group">
+          <label class="admin-label">Janr</label>
+          <select class="admin-select" id="adminGenre">
+            <option value="komediya">Komediya 😂</option>
+            <option value="drama">Drama 🎭</option>
+            <option value="fantastik">Fantastik 🚀</option>
+          </select>
+        </div>
+        <div class="admin-input-group">
+          <label class="admin-label">Tavsif</label>
+          <textarea class="admin-textarea" id="adminDesc" placeholder="Kino haqida qisqacha..."></textarea>
+        </div>
+        <button class="admin-btn admin-btn-primary" onclick="addMovie()">➕ Kino Qo'shish</button>
+        <hr class="admin-divider">
+        <div class="admin-list-title"><span class="dot"></span> Siz Qo'shgansiz (<span id="adminCount">0</span>)</div>
+        <div id="adminMovieList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="admin-toast" id="adminToast"></div>
+
+<script>
+/* ===== ESKI 12 TA KINO — O'ZGARMAYDI ===== */
+const DEFAULT_MOVIES = [
+  { id:0,  title:"Fantastik Oila",     genre:"komediya",  label:"Komediya",  ytId:"RpX4OWwZ2go", url:"https://youtu.be/RpX4OWwZ2go", desc:"Ajoyib fantastik komediya! Oila hayotidagi kulgili va hayajonli voqealar. Butun oila bilan tomosha qilish uchun ideal.", isDefault:true },
+  { id:1,  title:"Xoreograf",          genre:"komediya",  label:"Komediya",  ytId:"PUU02klggno", url:"https://youtu.be/PUU02klggno", desc:"Xoreograf haqida kulgili komediya. Raqs va hayot o'rtasidagi qiziqarli voqealar.", isDefault:true },
+  { id:2,  title:"Sehrli Qalpoqcha",   genre:"komediya",  label:"Komediya",  ytId:"nWQS38wkEzE", url:"https://youtu.be/nWQS38wkEzE", desc:"Sehrli qalpoqcha orqali boshlanib ketadigan g'ayrioddiy sarguzashtlar haqida ajoyib komediya.", isDefault:true },
+  { id:3,  title:"Kelin Qaynona",      genre:"komediya",  label:"Komediya",  ytId:"x9Fcca0J3-I", url:"https://youtu.be/x9Fcca0J3-I", desc:"Kelin va qaynona o'rtasidagi kulgili munosabatlar. Har bir oilaga tanish vaziyatlar!", isDefault:true },
+  { id:4,  title:"Sevgi Farishtasi",   genre:"komediya",  label:"Komediya",  ytId:"CT7YhRBOweA", url:"https://youtu.be/CT7YhRBOweA", desc:"Sevgi va farishta haqida romantik komediya. Yurak to'ldiradigan qiziqarli voqealar.", isDefault:true },
+  { id:5,  title:"Bojalar",            genre:"komediya",  label:"Komediya",  ytId:"cy1eaDN1xiI", url:"https://youtu.be/cy1eaDN1xiI", desc:"Bojalar o'rtasidagi do'stlik va kulgili munosabatlar haqida ajoyib komediya filmi.", isDefault:true },
+  { id:6,  title:"Mening Do'stim Jin", genre:"komediya",  label:"Komediya",  ytId:"INi3mBgYuhQ", url:"https://youtu.be/INi3mBgYuhQ", desc:"Jin bilan do'stlik haqida g'ayrioddiy va kulgili voqealar. Tasavvur qilib bo'lmas sarguzashtlar!", isDefault:true },
+  { id:7,  title:"Mening Mahalim",     genre:"komediya",  label:"Komediya",  ytId:"-KbhLR5fLOE", url:"https://youtu.be/-KbhLR5fLOE", desc:"Mahalla hayoti va u erdagi kulgili voqealar. O'zbek turmushining eng yorqin tasvirlanishi.", isDefault:true },
+  { id:8,  title:"Ko'rinmas Qotil",    genre:"drama",     label:"Drama",     ytId:"0fM5ZeMViVw", url:"https://youtu.be/0fM5ZeMViVw", desc:"Sirli va hayajonli drama filmi. Ko'rinmas qotil kimligini topish uchun qo'zg'atuvchi sarguzasht.", isDefault:true },
+  { id:9,  title:"Jangari Rossiya",    genre:"drama",     label:"Drama",     ytId:"wzmwxEdl8fw", url:"https://youtu.be/wzmwxEdl8fw", desc:"Hayajonli jangari drama. Qahramonlik va fidokorlik haqida kuchli hissiyotlarga to'la film.", isDefault:true },
+  { id:10, title:"Yashil Maskan",      genre:"drama",     label:"Drama",     ytId:"k9rddYHTPGo", url:"https://youtu.be/k9rddYHTPGo", desc:"Tabiat qo'ynida bo'lib o'tadigan dramatik voqealar. Insoniy munosabatlar va muhabbat haqida.", isDefault:true },
+  { id:11, title:"Biz O'likmiz",       genre:"drama",     label:"Drama",     ytId:"lytFcLOK6z4", url:"https://youtu.be/lytFcLOK6z4", desc:"Chuqur dramatik film. Hayot va o'lim o'rtasidagi chegara haqida ta'sirchan hikoya.", isDefault:true },
+];
+
+const ADMIN_PASSWORD = 'admin123';
+const GENRE_LABELS = { komediya: 'Komediya', drama: 'Drama', fantastik: 'Fantastik' };
+
+let isAdminLoggedIn = false;
+let currentId = null;
+let currentGenre = 'all';
+let favs = JSON.parse(localStorage.getItem('uzfavs6') || '[]');
+let customMovies = JSON.parse(localStorage.getItem('uzmovies6') || '[]');
+
+/* ===== BARCHA KINOLAR: ESKI + YANGI ===== */
+function getAllMovies() {
+  return [...DEFAULT_MOVIES, ...customMovies];
+}
+
+/* ===== YOUTUBE ID AJRATISH ===== */
+function extractYtId(link) {
+  if (!link) return null;
+  link = link.trim();
+  let m = link.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  m = link.match(/youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  m = link.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  m = link.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  if (/^[a-zA-Z0-9_-]{11}$/.test(link)) return link;
+  return null;
+}
+
+function thumb(ytId) { return 'https://img.youtube.com/vi/' + ytId + '/mqdefault.jpg'; }
+
+/* ===== KARTOCHKA HTML ===== */
+function cardHTML(m) {
+  const cls = m.genre === 'drama' ? ' drama' : m.genre === 'fantastik' ? ' fantastik' : '';
+  return '<div class="movie-card" onclick="openMovie(' + m.id + ')">' +
+    '<div class="movie-thumb">' +
+      '<img src="' + thumb(m.ytId) + '" alt="' + m.title + '" loading="lazy">' +
+      '<div class="thumb-overlay"><div class="play-circle">▶</div></div>' +
+      '<div class="genre-tag' + cls + '">' + m.label + '</div>' +
+    '</div>' +
+    '<div class="movie-title">' + m.title + '</div>' +
+  '</div>';
+}
+
+function renderGrid(list, id) {
+  document.getElementById(id).innerHTML = list.map(cardHTML).join('');
+}
+
+/* ===== JANRLAR CHIZIQLARI ===== */
+function renderGenres() {
+  const allGenres = ['all', ...new Set(getAllMovies().map(m => m.genre))];
+  const labels = { all: 'Barchasi', komediya: 'Komediya 😂', drama: 'Drama 🎭', fantastik: 'Fantastik 🚀' };
+  document.getElementById('genreBar').innerHTML = allGenres.map(g =>
+    '<div class="genre-chip' + (g === currentGenre ? ' active' : '') + '" onclick="filterGenre(\'' + g + '\',this)">' + (labels[g] || g) + '</div>'
+  ).join('');
+}
+
+/* ===== BOSH SAHIFA ===== */
+function renderHome() {
+  const list = currentGenre === 'all' ? getAllMovies() : getAllMovies().filter(m => m.genre === currentGenre);
+  renderGrid(list, 'moviesGrid');
+}
+
+function filterGenre(genre, chip) {
+  currentGenre = genre;
+  document.querySelectorAll('.genre-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  renderHome();
+}
+
+/* ===== HERO BANNER ===== */
+function renderHero() {
+  const m = getAllMovies()[0];
+  if (!m) return;
+  document.getElementById('heroImg').src = thumb(m.ytId);
+  document.getElementById('heroTitle').textContent = m.title;
+  document.getElementById('heroMeta').innerHTML = '<span class="star">★★★★☆</span><span>2024</span><span>•</span><span>' + m.label + '</span>';
+}
+
+/* ===== HAQIDA STATISTIKA ===== */
+function renderAboutStats() {
+  const all = getAllMovies();
+  const genres = new Set(all.map(m => m.genre));
+  document.getElementById('aboutStats').innerHTML =
+    '<div><div class="stat-num">' + all.length + '</div><div class="stat-label">Kino</div></div>' +
+    '<div><div class="stat-num">' + genres.size + '</div><div class="stat-label">Janr</div></div>' +
+    '<div><div class="stat-num">100%</div><div class="stat-label">Bepul</div></div>';
+}
+
+/* ===== HAMMASINI YANGILASH ===== */
+function refreshAll() {
+  renderGenres();
+  renderHero();
+  renderHome();
+  renderAboutStats();
+}
+
+/* ===== QIDIRUV ===== */
+function filterMovies(q) {
+  const r = getAllMovies().filter(m => m.title.toLowerCase().includes(q.toLowerCase()) || m.label.toLowerCase().includes(q.toLowerCase()));
+  document.getElementById('searchGrid').innerHTML = r.length ? r.map(cardHTML).join('') : '';
+  document.getElementById('noResults').style.display = r.length ? 'none' : 'block';
+  showPage('search', document.querySelectorAll('.nav-item')[1]);
+}
+
+/* ===== PLAYER ===== */
+function openMovie(id) {
+  const m = getAllMovies().find(x => x.id === id);
+  if (!m) return;
+  currentId = id;
+  document.getElementById('modalTopTitle').textContent = m.title;
+  document.getElementById('modalMovieTitle').textContent = m.title;
+  document.getElementById('modalBadge').textContent = m.label;
+  const badgeCls = 'modal-badge' + (m.genre === 'drama' ? ' drama' : '') + (m.genre === 'fantastik' ? ' fantastik' : '');
+  document.getElementById('modalBadge').className = badgeCls;
+  document.getElementById('modalDesc').textContent = m.desc;
+  document.getElementById('ytPlayer').src = 'https://www.youtube-nocookie.com/embed/' + m.ytId + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&fs=1';
+  updateFavBtn();
+  document.getElementById('playerArea').scrollTop = 0;
+  document.getElementById('movieModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('movieModal').classList.remove('open');
+  document.getElementById('ytPlayer').src = 'about:blank';
+  document.body.style.overflow = '';
+}
+
+function openYoutube() {
+  const m = getAllMovies().find(x => x.id === currentId);
+  if (m) window.open(m.url, '_blank');
+}
+
+/* ===== SEVIMLILAR ===== */
+function toggleFav() {
+  if (currentId === null) return;
+  const i = favs.indexOf(currentId);
+  if (i === -1) favs.push(currentId); else favs.splice(i, 1);
+  localStorage.setItem('uzfavs6', JSON.stringify(favs));
+  updateFavBtn();
+}
+function updateFavBtn() {
+  document.getElementById('favBtn').textContent = favs.includes(currentId) ? '❤️' : '♡';
+}
+function loadFavs() {
+  const list = getAllMovies().filter(m => favs.includes(m.id));
+  document.getElementById('favGrid').innerHTML = list.map(cardHTML).join('');
+  document.getElementById('noFavs').style.display = list.length ? 'none' : 'block';
+}
+
+/* ===== SAHIFALAR ===== */
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+function toggleSearch() {
+  const bar = document.getElementById('searchBar');
+  bar.classList.toggle('active');
+  if (bar.classList.contains('active')) document.getElementById('searchInput').focus();
+}
+function focusSearch() {
+  document.getElementById('searchBar').classList.add('active');
+  setTimeout(function() { document.getElementById('searchInput').focus(); }, 100);
+}
+
+/* ============================================= */
+/*              ADMIN PANEL FUNKSIYALARI          */
+/* ============================================= */
+
+function openAdmin() {
+  document.getElementById('adminOverlay').classList.add('open');
+  if (isAdminLoggedIn) {
+    showDashboard();
+  } else {
+    document.getElementById('adminLogin').style.display = 'block';
+    document.getElementById('adminDashboard').style.display = 'none';
+    setTimeout(function() { document.getElementById('adminPwInput').focus(); }, 100);
+  }
+}
+
+function closeAdmin() {
+  document.getElementById('adminOverlay').classList.remove('open');
+}
+
+function loginAdmin() {
+  var pw = document.getElementById('adminPwInput').value;
+  if (pw === ADMIN_PASSWORD) {
+    isAdminLoggedIn = true;
+    document.getElementById('adminPwInput').value = '';
+    showDashboard();
+    showToast('Muvaffaqiyatli kirdingiz!', 'success');
+  } else {
+    showToast('Parol noto\'g\'ri!', 'error');
+    document.getElementById('adminPwInput').value = '';
+    document.getElementById('adminPwInput').focus();
+  }
+}
+
+function logoutAdmin() {
+  isAdminLoggedIn = false;
+  document.getElementById('adminLogin').style.display = 'block';
+  document.getElementById('adminDashboard').style.display = 'none';
+  showToast('Tizimdan chiqdingiz', '');
+}
+
+function showDashboard() {
+  document.getElementById('adminLogin').style.display = 'none';
+  document.getElementById('adminDashboard').style.display = 'block';
+  renderAdminList();
+  clearForm();
+}
+
+function clearForm() {
+  document.getElementById('adminYtLink').value = '';
+  document.getElementById('adminTitle').value = '';
+  document.getElementById('adminGenre').value = 'komediya';
+  document.getElementById('adminDesc').value = '';
+  document.getElementById('linkPreview').classList.remove('show');
+}
+
+/* Link preview — yozilganida darhol rasm ko'rsatadi */
+function previewLink(val) {
+  var ytId = extractYtId(val);
+  var el = document.getElementById('linkPreview');
+  if (ytId) {
+    document.getElementById('previewThumb').src = thumb(ytId);
+    document.getElementById('previewStatus').textContent = '✅ Link to\'g\'ri';
+    document.getElementById('previewId').textContent = 'ID: ' + ytId;
+    el.classList.add('show');
+  } else {
+    el.classList.remove('show');
+  }
+}
+
+/* YANGI KINO QO'SHISH — faqat customMovies ga tushadi, eski kinolar o'zgarmaydi */
+function addMovie() {
+  var link = document.getElementById('adminYtLink').value.trim();
+  var title = document.getElementById('adminTitle').value.trim();
+  var genre = document.getElementById('adminGenre').value;
+  var desc = document.getElementById('adminDesc').value.trim();
+
+  if (!link) { showToast('YouTube link kiriting!', 'error'); return; }
+  if (!title) { showToast('Kino nomini kiriting!', 'error'); return; }
+
+  var ytId = extractYtId(link);
+  if (!ytId) { showToast('YouTube link noto\'g\'ri!', 'error'); return; }
+
+  /* Takroriy video tekshirish */
+  var all = getAllMovies();
+  for (var i = 0; i < all.length; i++) {
+    if (all[i].ytId === ytId) {
+      showToast('Bu video allaqachon mavjud!', 'error');
+      return;
+    }
+  }
+
+  var newMovie = {
+    id: Date.now(),
+    title: title,
+    genre: genre,
+    label: GENRE_LABELS[genre] || genre,
+    ytId: ytId,
+    url: 'https://youtu.be/' + ytId,
+    desc: desc || 'Tavsif berilmagan.',
+    isDefault: false
+  };
+
+  customMovies.push(newMovie);
+  localStorage.setItem('uzmovies6', JSON.stringify(customMovies));
+
+  /* Bosh sahifa, hero, statistika — hammasi yangilanadi */
+  refreshAll();
+  renderAdminList();
+  clearForm();
+  showToast('"' + title + '" qo\'shildi!', 'success');
+}
+
+/* FAQAT YANGI QO'SHILGAN KINOLARNI O'CHIRISH — eski 12 ta himoyalangan */
+function deleteMovie(id) {
+  var m = customMovies.find(function(x) { return x.id === id; });
+  if (!m) return;
+  customMovies = customMovies.filter(function(x) { return x.id !== id; });
+  localStorage.setItem('uzmovies6', JSON.stringify(customMovies));
+  favs = favs.filter(function(f) { return f !== id; });
+  localStorage.setItem('uzfavs6', JSON.stringify(favs));
+  refreshAll();
+  renderAdminList();
+  showToast('"' + m.title + '" o\'chirildi', '');
+}
+
+/* Admin paneldagi ro'yxat — faqat yangi qo'shilganlar */
+function renderAdminList() {
+  document.getElementById('adminCount').textContent = customMovies.length;
+  var el = document.getElementById('adminMovieList');
+  if (!customMovies.length) {
+    el.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">Hali kino qo\'shilmagan</div>';
+    return;
+  }
+  el.innerHTML = customMovies.map(function(m) {
+    return '<div class="admin-movie-item">' +
+      '<div class="admin-movie-thumb"><img src="' + thumb(m.ytId) + '" alt=""></div>' +
+      '<div class="admin-movie-info">' +
+        '<div class="admin-movie-name">' + m.title + '</div>' +
+        '<div class="admin-movie-genre">' + m.label + '</div>' +
+      '</div>' +
+      '<button class="admin-movie-del" onclick="deleteMovie(' + m.id + ')" title="O\'chirish">🗑</button>' +
+    '</div>';
+  }).join('');
+}
+
+/* Toast xabarnoma */
+function showToast(msg, type) {
+  var t = document.getElementById('adminToast');
+  t.textContent = msg;
+  t.className = 'admin-toast' + (type ? ' ' + type : '');
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function() { t.classList.remove('show'); }, 2200);
+}
+
+/* Overlay ga bosilganda yopish */
+document.getElementById('adminOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeAdmin();
+});
+
+/* ===== ISHGA TUSHIRISH ===== */
+refreshAll();
+</script>
+</body>
+</html>
