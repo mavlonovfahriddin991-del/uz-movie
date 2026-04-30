@@ -6,6 +6,7 @@
 <title>UZ Movie</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
+  /* ===== KECHKI REJIM (asl) ===== */
   :root {
     --bg: #0a0a0f;
     --card: #13131a;
@@ -16,41 +17,106 @@
     --text: #f0f0f5;
     --muted: #7a7a8e;
     --radius: 14px;
+    --border: rgba(255,255,255,0.06);
+    --overlay: rgba(0,0,0,0.7);
+    --header-bg: rgba(10,10,15,0.97);
+    --input-bg: var(--card2);
+    --input-border: rgba(255,255,255,0.08);
+    --hero-grad1: rgba(10,10,15,0.97);
+    --modal-top-bg: rgba(10,10,15,0.98);
+    --tag-kom: rgba(230,57,70,0.88);
+    --tag-dra: rgba(30,100,200,0.88);
+    --tag-fan: rgba(120,40,200,0.88);
+    --play-bg: rgba(230,57,70,0.92);
+    --thumb-over: rgba(0,0,0,0.4);
+    --nav-bg: rgba(13,13,20,0.97);
+    --admin-overlay: rgba(0,0,0,0.7);
+    --yt-prev-bg: rgba(255,0,0,0.06);
+    --yt-prev-border: rgba(255,0,0,0.15);
   }
+
+  /* ===== KUNDUZGI REJIM ===== */
+  :root.light {
+    --bg: #f2f0eb;
+    --card: #ffffff;
+    --card2: #eae8e3;
+    --text: #1a1a2e;
+    --muted: #6b6b80;
+    --border: rgba(0,0,0,0.07);
+    --overlay: rgba(0,0,0,0.35);
+    --header-bg: rgba(242,240,235,0.97);
+    --input-bg: #eae8e3;
+    --input-border: rgba(0,0,0,0.1);
+    --hero-grad1: rgba(242,240,235,0.97);
+    --modal-top-bg: rgba(242,240,235,0.98);
+    --tag-kom: rgba(230,57,70,0.95);
+    --tag-dra: rgba(30,100,200,0.95);
+    --tag-fan: rgba(120,40,200,0.95);
+    --play-bg: rgba(230,57,70,0.95);
+    --thumb-over: rgba(0,0,0,0.25);
+    --nav-bg: rgba(255,255,255,0.97);
+    --admin-overlay: rgba(0,0,0,0.35);
+    --yt-prev-bg: rgba(255,0,0,0.05);
+    --yt-prev-border: rgba(255,0,0,0.12);
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; overflow-x: hidden; }
+  body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; overflow-x: hidden; transition: background 0.35s, color 0.35s; }
 
   header {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(10,10,15,0.97); backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    background: var(--header-bg); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
     padding: 0 16px; height: 56px;
     display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.35s, border-color 0.35s;
   }
   .logo { font-family: 'Bebas Neue', cursive; font-size: 26px; letter-spacing: 2px;
     background: linear-gradient(90deg, var(--accent), var(--accent2));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .logo span { -webkit-text-fill-color: var(--gold); }
-  .icon-btn { background: none; border: none; color: var(--text); cursor: pointer; font-size: 20px; padding: 4px; }
-  .header-icons { display: flex; gap: 16px; }
+  .icon-btn { background: none; border: none; color: var(--text); cursor: pointer; font-size: 20px; padding: 4px; transition: color 0.2s; }
+  .header-icons { display: flex; gap: 14px; align-items: center; }
 
-  .search-bar { display: none; padding: 10px 16px; background: var(--card); border-bottom: 1px solid rgba(255,255,255,0.05); }
+  /* KUNDUZGI/KECHKI TOGGLE */
+  .theme-toggle {
+    width: 48px; height: 26px; border-radius: 30px; border: none;
+    background: var(--card2); cursor: pointer; position: relative;
+    transition: background 0.3s; flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+  .theme-toggle::after {
+    content: ''; position: absolute; top: 2px; left: 2px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--accent); transition: transform 0.3s, background 0.3s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .theme-toggle.light::after { transform: translateX(22px); background: #f59e0b; }
+  .theme-icon { position: absolute; top: 50%; transform: translateY(-50%); font-size: 12px; pointer-events: none; transition: opacity 0.3s; }
+  .theme-icon.moon { left: 7px; }
+  .theme-icon.sun { right: 6px; }
+  .theme-toggle:not(.light) .moon { opacity: 1; }
+  .theme-toggle:not(.light) .sun { opacity: 0.3; }
+  .theme-toggle.light .moon { opacity: 0.3; }
+  .theme-toggle.light .sun { opacity: 1; }
+
+  .search-bar { display: none; padding: 10px 16px; background: var(--card); border-bottom: 1px solid var(--border); transition: background 0.35s; }
   .search-bar.active { display: block; }
-  .search-bar input { width: 100%; background: var(--card2); border: 1px solid rgba(255,255,255,0.08); border-radius: 30px; padding: 10px 18px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 14px; outline: none; }
+  .search-bar input { width: 100%; background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 30px; padding: 10px 18px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 14px; outline: none; transition: all 0.35s; }
   .search-bar input::placeholder { color: var(--muted); }
 
   .genres { display: flex; gap: 8px; padding: 14px 16px; overflow-x: auto; scrollbar-width: none; }
   .genres::-webkit-scrollbar { display: none; }
-  .genre-chip { flex-shrink: 0; padding: 7px 16px; border-radius: 30px; background: var(--card2); border: 1px solid rgba(255,255,255,0.07); color: var(--muted); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .genre-chip { flex-shrink: 0; padding: 7px 16px; border-radius: 30px; background: var(--card2); border: 1px solid var(--border); color: var(--muted); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
   .genre-chip.active, .genre-chip:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 
   .hero { margin: 0 16px 20px; border-radius: var(--radius); overflow: hidden; position: relative; cursor: pointer; height: 210px; background: #111; }
   .hero img { width: 100%; height: 100%; object-fit: cover; opacity: 0.55; }
-  .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,15,0.97) 0%, rgba(10,10,15,0.2) 60%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 18px; }
+  .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, var(--hero-grad1) 0%, rgba(0,0,0,0.2) 60%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 18px; }
   .hero-badge { display: inline-block; background: var(--accent); color: #fff; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; width: fit-content; animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.55} }
-  .hero h2 { font-family: 'Bebas Neue', cursive; font-size: 28px; letter-spacing: 1px; line-height: 1; margin-bottom: 6px; }
-  .hero-meta { display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .hero h2 { font-family: 'Bebas Neue', cursive; font-size: 28px; letter-spacing: 1px; line-height: 1; margin-bottom: 6px; color: #fff; }
+  .hero-meta { display: flex; gap: 10px; align-items: center; font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 12px; }
   .star { color: var(--gold); }
   .play-btn-hero { display: flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; border: none; border-radius: 30px; padding: 10px 22px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px; cursor: pointer; width: fit-content; }
 
@@ -60,25 +126,36 @@
   .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; }
 
   .movies-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 16px; }
-  .movie-card { cursor: pointer; transition: transform 0.18s; }
+  .movie-card { cursor: pointer; transition: transform 0.18s; position: relative; }
   .movie-card:active { transform: scale(0.95); }
-  .movie-thumb { width: 100%; height: 150px; border-radius: 10px; overflow: hidden; position: relative; background: var(--card2); margin-bottom: 7px; }
+  .movie-thumb { width: 100%; height: 150px; border-radius: 10px; overflow: hidden; position: relative; background: var(--card2); margin-bottom: 7px; transition: background 0.35s; }
   .movie-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .thumb-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+  .thumb-overlay { position: absolute; inset: 0; background: var(--thumb-over); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
   .movie-card:hover .thumb-overlay, .movie-card:active .thumb-overlay { opacity: 1; }
-  .play-circle { width: 40px; height: 40px; background: rgba(230,57,70,0.92); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-  .genre-tag { position: absolute; top: 7px; left: 7px; background: rgba(230,57,70,0.88); color: #fff; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .genre-tag.drama { background: rgba(30,100,200,0.88); }
-  .genre-tag.fantastik { background: rgba(120,40,200,0.88); }
-  .movie-title { font-size: 11px; font-weight: 700; line-height: 1.3; color: var(--text); }
+  .play-circle { width: 40px; height: 40px; background: var(--play-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .genre-tag { position: absolute; top: 7px; left: 7px; background: var(--tag-kom); color: #fff; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 2; }
+  .genre-tag.drama { background: var(--tag-dra); }
+  .genre-tag.fantastik { background: var(--tag-fan); }
+  .movie-title { font-size: 11px; font-weight: 700; line-height: 1.3; color: var(--text); transition: color 0.35s; }
+
+  /* O'CHIRISH TUGMASI - kartochka ustida */
+  .del-card-btn {
+    position: absolute; top: 5px; right: 5px; z-index: 3;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.15);
+    color: #fff; font-size: 12px; cursor: pointer;
+    display: none; align-items: center; justify-content: center;
+    transition: all 0.2s; backdrop-filter: blur(4px);
+  }
+  .del-card-btn:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.15); }
 
   .modal-bg { display: none; position: fixed; inset: 0; z-index: 300; background: #000; flex-direction: column; animation: fadeIn 0.2s ease; }
   .modal-bg.open { display: flex; }
   @keyframes fadeIn { from{opacity:0}to{opacity:1} }
-  .modal-topbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(10,10,15,0.98); border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; }
-  .modal-close { background: var(--card2); border: none; color: var(--text); width: 34px; height: 34px; border-radius: 50%; font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .modal-topbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--modal-top-bg); border-bottom: 1px solid var(--border); flex-shrink: 0; transition: background 0.35s; }
+  .modal-close { background: var(--card2); border: none; color: var(--text); width: 34px; height: 34px; border-radius: 50%; font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.35s; }
   .modal-topbar-title { font-family: 'Bebas Neue', cursive; font-size: 18px; letter-spacing: 1px; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 8px; }
-  .player-area { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: var(--bg); }
+  .player-area { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: var(--bg); transition: background 0.35s; }
   .yt-frame-wrap { width: 100%; background: #000; flex-shrink: 0; }
   .yt-frame-wrap iframe { width: 100%; aspect-ratio: 16/9; border: none; display: block; }
   .modal-info { padding: 14px 16px; }
@@ -88,17 +165,17 @@
   .modal-badge { display: inline-block; padding: 3px 11px; border-radius: 20px; background: var(--accent); color: #fff; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; }
   .modal-badge.drama { background: #1e64c8; }
   .modal-badge.fantastik { background: #7828c8; }
-  .btn-fav { background: var(--card2); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 8px 14px; font-size: 20px; cursor: pointer; flex-shrink: 0; }
-  .modal-desc { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 16px; }
-  .yt-open-row { display: flex; align-items: center; gap: 12px; background: var(--card2); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 12px 14px; cursor: pointer; transition: background 0.18s; text-decoration: none; margin-bottom: 6px; }
-  .yt-open-row:hover { background: rgba(255,0,0,0.12); border-color: rgba(255,0,0,0.3); }
+  .btn-fav { background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 8px 14px; font-size: 20px; cursor: pointer; flex-shrink: 0; transition: all 0.35s; }
+  .modal-desc { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 16px; transition: color 0.35s; }
+  .yt-open-row { display: flex; align-items: center; gap: 12px; background: var(--card2); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; cursor: pointer; transition: all 0.2s; text-decoration: none; margin-bottom: 6px; }
+  .yt-open-row:hover { background: var(--yt-prev-bg); border-color: rgba(255,0,0,0.3); }
   .yt-logo { width: 40px; height: 40px; border-radius: 10px; background: #ff0000; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
   .yt-open-text { flex: 1; }
-  .yt-open-text strong { display: block; font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
-  .yt-open-text span { font-size: 11px; color: var(--muted); }
+  .yt-open-text strong { display: block; font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 2px; transition: color 0.35s; }
+  .yt-open-text span { font-size: 11px; color: var(--muted); transition: color 0.35s; }
   .yt-arrow { font-size: 18px; color: var(--muted); }
 
-  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(13,13,20,0.97); backdrop-filter: blur(14px); border-top: 1px solid rgba(255,255,255,0.06); display: flex; height: 58px; z-index: 100; }
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(14px); border-top: 1px solid var(--border); display: flex; height: 58px; z-index: 100; transition: all 0.35s; }
   .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; border: none; background: none; color: var(--muted); font-size: 10px; font-family: 'Nunito', sans-serif; font-weight: 700; transition: color 0.2s; }
   .nav-icon { font-size: 22px; }
   .nav-item.active { color: var(--accent); }
@@ -107,25 +184,24 @@
   .page { display: none; }
   .page.active { display: block; }
 
-  .about-box { margin: 16px; background: var(--card); border-radius: var(--radius); padding: 24px; border: 1px solid rgba(255,255,255,0.06); text-align: center; }
+  .about-box { margin: 16px; background: var(--card); border-radius: var(--radius); padding: 24px; border: 1px solid var(--border); text-align: center; transition: all 0.35s; }
   .about-logo-big { font-family: 'Bebas Neue', cursive; font-size: 52px; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .about-stats { display: flex; justify-content: center; gap: 32px; margin-top: 16px; }
   .stat-num { font-family: 'Bebas Neue', cursive; font-size: 30px; color: var(--accent); }
   .stat-label { font-size: 11px; color: var(--muted); font-weight: 700; }
-
   #noResults, #noFavs { display: none; text-align: center; color: var(--muted); padding: 40px 16px; font-size: 14px; line-height: 1.6; }
 
   /* ADMIN */
-  .admin-overlay { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 20px; }
+  .admin-overlay { display: none; position: fixed; inset: 0; z-index: 500; background: var(--admin-overlay); backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 20px; transition: background 0.35s; }
   .admin-overlay.open { display: flex; }
-  .admin-box { background: var(--card); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; }
-  .admin-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .admin-box { background: var(--card); border: 1px solid var(--border); border-radius: 18px; width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; transition: all 0.35s; }
+  .admin-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid var(--border); }
   .admin-header-title { font-family: 'Bebas Neue', cursive; font-size: 22px; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
-  .admin-close { background: var(--card2); border: none; color: var(--text); width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .admin-close { background: var(--card2); border: none; color: var(--text); width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.35s; }
   .admin-body { padding: 18px; }
   .admin-input-group { margin-bottom: 14px; }
-  .admin-label { display: block; font-size: 12px; font-weight: 800; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .admin-input, .admin-select, .admin-textarea { width: 100%; background: var(--card2); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 11px 14px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
+  .admin-label { display: block; font-size: 12px; font-weight: 800; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.35s; }
+  .admin-input, .admin-select, .admin-textarea { width: 100%; background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 12px; padding: 11px 14px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 14px; outline: none; transition: all 0.35s; }
   .admin-input:focus, .admin-select:focus, .admin-textarea:focus { border-color: var(--accent); }
   .admin-textarea { resize: vertical; min-height: 70px; }
   .admin-select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%237a7a8e'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
@@ -133,9 +209,9 @@
   .admin-btn { width: 100%; padding: 13px; border: none; border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 15px; cursor: pointer; transition: all 0.2s; }
   .admin-btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
   .admin-btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-  .admin-divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 18px 0; }
+  .admin-divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; transition: border-color 0.35s; }
   .admin-list-title { font-family: 'Bebas Neue', cursive; font-size: 18px; letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .admin-movie-item { display: flex; align-items: center; gap: 10px; background: var(--card2); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+  .admin-movie-item { display: flex; align-items: center; gap: 10px; background: var(--card2); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; transition: background 0.35s; }
   .admin-movie-thumb { width: 50px; height: 36px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background: #000; }
   .admin-movie-thumb img { width: 100%; height: 100%; object-fit: cover; }
   .admin-movie-info { flex: 1; min-width: 0; }
@@ -143,17 +219,31 @@
   .admin-movie-genre { font-size: 10px; color: var(--muted); font-weight: 700; }
   .admin-movie-del { background: none; border: none; color: var(--accent); font-size: 18px; cursor: pointer; padding: 4px; flex-shrink: 0; opacity: 0.7; transition: opacity 0.2s; }
   .admin-movie-del:hover { opacity: 1; }
-  .admin-logout { background: none; border: 1px solid rgba(255,255,255,0.08); color: var(--muted); border-radius: 8px; padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Nunito', sans-serif; }
+  .admin-logout { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 8px; padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Nunito', sans-serif; transition: all 0.2s; }
   .admin-logout:hover { color: var(--accent); border-color: rgba(230,57,70,0.3); }
-  .admin-toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--card2); color: var(--text); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px 20px; font-size: 13px; font-weight: 700; z-index: 600; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; }
+  .admin-toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--card2); color: var(--text); border: 1px solid var(--border); border-radius: 12px; padding: 10px 20px; font-size: 13px; font-weight: 700; z-index: 600; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; }
   .admin-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .admin-toast.success { border-color: rgba(0,200,100,0.3); color: #00c864; }
   .admin-toast.error { border-color: rgba(230,57,70,0.3); color: var(--accent); }
   .link-preview { margin-top: 6px; display: none; }
-  .link-preview.show { display: flex; align-items: center; gap: 10px; background: rgba(255,0,0,0.06); border: 1px solid rgba(255,0,0,0.15); border-radius: 10px; padding: 8px 12px; }
+  .link-preview.show { display: flex; align-items: center; gap: 10px; background: var(--yt-prev-bg); border: 1px solid var(--yt-prev-border); border-radius: 10px; padding: 8px 12px; }
   .link-preview img { width: 64px; height: 36px; border-radius: 6px; object-fit: cover; }
   .link-preview-text { font-size: 12px; color: var(--muted); }
-  .link-preview-text strong { color: var(--text); display: block; font-size: 13px; margin-bottom: 2px; }
+  .link-preview-text strong { color: var(--text); display: block; font-size: 13px; margin-bottom: 2px; transition: color 0.35s; }
+
+  /* O'CHIRISH TASDIQLASH MODALI */
+  .confirm-overlay { display: none; position: fixed; inset: 0; z-index: 550; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 20px; }
+  .confirm-overlay.open { display: flex; }
+  .confirm-box { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 24px; width: 100%; max-width: 320px; text-align: center; animation: fadeIn 0.15s ease; transition: all 0.35s; }
+  .confirm-icon { font-size: 40px; margin-bottom: 12px; }
+  .confirm-title { font-family: 'Bebas Neue', cursive; font-size: 22px; letter-spacing: 1px; margin-bottom: 6px; }
+  .confirm-text { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 18px; }
+  .confirm-text strong { color: var(--text); }
+  .confirm-btns { display: flex; gap: 10px; }
+  .confirm-btns button { flex: 1; padding: 11px; border: none; border-radius: 12px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+  .confirm-cancel { background: var(--card2); color: var(--text); border: 1px solid var(--border) !important; }
+  .confirm-delete { background: var(--accent); color: #fff; }
+  .confirm-delete:hover { opacity: 0.85; }
 </style>
 </head>
 <body>
@@ -161,6 +251,10 @@
 <header>
   <div class="logo">UZ<span>Movie</span></div>
   <div class="header-icons">
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+      <span class="theme-icon moon">🌙</span>
+      <span class="theme-icon sun">☀️</span>
+    </button>
     <button class="icon-btn" onclick="toggleSearch()">🔍</button>
     <button class="icon-btn" onclick="openAdmin()" title="Admin panel">🔒</button>
   </div>
@@ -258,6 +352,19 @@
   </div>
 </div>
 
+<!-- O'CHIRISH TASDIQLASH MODALI -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon">🗑️</div>
+    <div class="confirm-title">O'chirishni tasdiqlash</div>
+    <div class="confirm-text" id="confirmText"></div>
+    <div class="confirm-btns">
+      <button class="confirm-cancel" onclick="closeConfirm()">Bekor qilish</button>
+      <button class="confirm-delete" id="confirmDeleteBtn" onclick="confirmDelete()">O'chirish</button>
+    </div>
+  </div>
+</div>
+
 <!-- ADMIN PANEL -->
 <div class="admin-overlay" id="adminOverlay">
   <div class="admin-box">
@@ -313,7 +420,7 @@
         </div>
         <button class="admin-btn admin-btn-primary" onclick="addMovie()">➕ Kino Qo'shish</button>
         <hr class="admin-divider">
-        <div class="admin-list-title"><span class="dot"></span> Siz Qo'shgansiz (<span id="adminCount">0</span>)</div>
+        <div class="admin-list-title"><span class="dot"></span> Barcha Kinolar (<span id="adminCount">0</span>)</div>
         <div id="adminMovieList"></div>
       </div>
     </div>
@@ -323,7 +430,7 @@
 <div class="admin-toast" id="adminToast"></div>
 
 <script>
-/* ===== ESKI 12 TA KINO — O'ZGARMAYDI ===== */
+/* ===== ESKI 12 TA KINO ===== */
 const DEFAULT_MOVIES = [
   { id:0,  title:"Fantastik Oila",     genre:"komediya",  label:"Komediya",  ytId:"RpX4OWwZ2go", url:"https://youtu.be/RpX4OWwZ2go", desc:"Ajoyib fantastik komediya! Oila hayotidagi kulgili va hayajonli voqealar. Butun oila bilan tomosha qilish uchun ideal.", isDefault:true },
   { id:1,  title:"Xoreograf",          genre:"komediya",  label:"Komediya",  ytId:"PUU02klggno", url:"https://youtu.be/PUU02klggno", desc:"Xoreograf haqida kulgili komediya. Raqs va hayot o'rtasidagi qiziqarli voqealar.", isDefault:true },
@@ -344,20 +451,26 @@ const GENRE_LABELS = { komediya: 'Komediya', drama: 'Drama', fantastik: 'Fantast
 
 let isAdminLoggedIn = false;
 let currentId = null;
+let deleteTargetId = null;
 let currentGenre = 'all';
-let favs = JSON.parse(localStorage.getItem('uzfavs6') || '[]');
-let customMovies = JSON.parse(localStorage.getItem('uzmovies6') || '[]');
+let favs = JSON.parse(localStorage.getItem('uzfavs7') || '[]');
 
-/* ===== BARCHA KINOLAR: ESKI + YANGI ===== */
+/* localStorage dan o'qish - o'chirilgan default id lar ham saqlanadi */
+let savedData = JSON.parse(localStorage.getItem('uzmovies7') || '{"custom":[],"removedDefaults":[]}');
+let customMovies = savedData.custom || [];
+let removedDefaults = savedData.removedDefaults || [];
+
+/* ===== BARCHA KINOLAR ===== */
 function getAllMovies() {
-  return [...DEFAULT_MOVIES, ...customMovies];
+  var filtered = DEFAULT_MOVIES.filter(function(m) { return removedDefaults.indexOf(m.id) === -1; });
+  return filtered.concat(customMovies);
 }
 
-/* ===== YOUTUBE ID AJRATISH ===== */
+/* ===== YOUTUBE ID ===== */
 function extractYtId(link) {
   if (!link) return null;
   link = link.trim();
-  let m = link.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+  var m = link.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
   if (m) return m[1];
   m = link.match(/youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/);
   if (m) return m[1];
@@ -373,63 +486,69 @@ function thumb(ytId) { return 'https://img.youtube.com/vi/' + ytId + '/mqdefault
 
 /* ===== KARTOCHKA HTML ===== */
 function cardHTML(m) {
-  const cls = m.genre === 'drama' ? ' drama' : m.genre === 'fantastik' ? ' fantastik' : '';
-  return '<div class="movie-card" onclick="openMovie(' + m.id + ')">' +
+  var cls = m.genre === 'drama' ? ' drama' : m.genre === 'fantastik' ? ' fantastik' : '';
+  return '<div class="movie-card" onmouseenter="showDelBtn(this)" onmouseleave="hideDelBtn(this)">' +
     '<div class="movie-thumb">' +
       '<img src="' + thumb(m.ytId) + '" alt="' + m.title + '" loading="lazy">' +
-      '<div class="thumb-overlay"><div class="play-circle">▶</div></div>' +
+      '<div class="thumb-overlay" onclick="event.stopPropagation();openMovie(' + m.id + ')"><div class="play-circle">▶</div></div>' +
       '<div class="genre-tag' + cls + '">' + m.label + '</div>' +
+      '<button class="del-card-btn" onclick="event.stopPropagation();askDelete(' + m.id + ')" title="O\'chirish">✕</button>' +
     '</div>' +
-    '<div class="movie-title">' + m.title + '</div>' +
+    '<div class="movie-title" onclick="openMovie(' + m.id + ')">' + m.title + '</div>' +
   '</div>';
 }
+
+function showDelBtn(card) { var b = card.querySelector('.del-card-btn'); if(b) b.style.display = 'flex'; }
+function hideDelBtn(card) { var b = card.querySelector('.del-card-btn'); if(b) b.style.display = 'none'; }
 
 function renderGrid(list, id) {
   document.getElementById(id).innerHTML = list.map(cardHTML).join('');
 }
 
-/* ===== JANRLAR CHIZIQLARI ===== */
+/* ===== JANRLAR ===== */
 function renderGenres() {
-  const allGenres = ['all', ...new Set(getAllMovies().map(m => m.genre))];
-  const labels = { all: 'Barchasi', komediya: 'Komediya 😂', drama: 'Drama 🎭', fantastik: 'Fantastik 🚀' };
-  document.getElementById('genreBar').innerHTML = allGenres.map(g =>
-    '<div class="genre-chip' + (g === currentGenre ? ' active' : '') + '" onclick="filterGenre(\'' + g + '\',this)">' + (labels[g] || g) + '</div>'
-  ).join('');
+  var allGenres = ['all'];
+  var seen = {};
+  getAllMovies().forEach(function(m) { if(!seen[m.genre]) { seen[m.genre]=true; allGenres.push(m.genre); } });
+  var labels = { all: 'Barchasi', komediya: 'Komediya 😂', drama: 'Drama 🎭', fantastik: 'Fantastik 🚀' };
+  document.getElementById('genreBar').innerHTML = allGenres.map(function(g) {
+    return '<div class="genre-chip' + (g === currentGenre ? ' active' : '') + '" onclick="filterGenre(\'' + g + '\',this)">' + (labels[g] || g) + '</div>';
+  }).join('');
 }
 
-/* ===== BOSH SAHIFA ===== */
 function renderHome() {
-  const list = currentGenre === 'all' ? getAllMovies() : getAllMovies().filter(m => m.genre === currentGenre);
+  var list = currentGenre === 'all' ? getAllMovies() : getAllMovies().filter(function(m) { return m.genre === currentGenre; });
   renderGrid(list, 'moviesGrid');
 }
 
 function filterGenre(genre, chip) {
   currentGenre = genre;
-  document.querySelectorAll('.genre-chip').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.genre-chip').forEach(function(c) { c.classList.remove('active'); });
   chip.classList.add('active');
   renderHome();
 }
 
-/* ===== HERO BANNER ===== */
 function renderHero() {
-  const m = getAllMovies()[0];
-  if (!m) return;
+  var all = getAllMovies();
+  var m = all[0];
+  if (!m) { document.getElementById('heroSection').style.display = 'none'; return; }
+  document.getElementById('heroSection').style.display = 'block';
   document.getElementById('heroImg').src = thumb(m.ytId);
   document.getElementById('heroTitle').textContent = m.title;
   document.getElementById('heroMeta').innerHTML = '<span class="star">★★★★☆</span><span>2024</span><span>•</span><span>' + m.label + '</span>';
+  document.getElementById('heroSection').onclick = function() { openMovie(m.id); };
 }
 
-/* ===== HAQIDA STATISTIKA ===== */
 function renderAboutStats() {
-  const all = getAllMovies();
-  const genres = new Set(all.map(m => m.genre));
+  var all = getAllMovies();
+  var seen = {};
+  all.forEach(function(m) { seen[m.genre] = true; });
   document.getElementById('aboutStats').innerHTML =
     '<div><div class="stat-num">' + all.length + '</div><div class="stat-label">Kino</div></div>' +
-    '<div><div class="stat-num">' + genres.size + '</div><div class="stat-label">Janr</div></div>' +
+    '<div><div class="stat-num">' + Object.keys(seen).length + '</div><div class="stat-label">Janr</div></div>' +
     '<div><div class="stat-num">100%</div><div class="stat-label">Bepul</div></div>';
 }
 
-/* ===== HAMMASINI YANGILASH ===== */
 function refreshAll() {
   renderGenres();
   renderHero();
@@ -439,7 +558,7 @@ function refreshAll() {
 
 /* ===== QIDIRUV ===== */
 function filterMovies(q) {
-  const r = getAllMovies().filter(m => m.title.toLowerCase().includes(q.toLowerCase()) || m.label.toLowerCase().includes(q.toLowerCase()));
+  var r = getAllMovies().filter(function(m) { return m.title.toLowerCase().indexOf(q.toLowerCase()) !== -1 || m.label.toLowerCase().indexOf(q.toLowerCase()) !== -1; });
   document.getElementById('searchGrid').innerHTML = r.length ? r.map(cardHTML).join('') : '';
   document.getElementById('noResults').style.display = r.length ? 'none' : 'block';
   showPage('search', document.querySelectorAll('.nav-item')[1]);
@@ -447,14 +566,14 @@ function filterMovies(q) {
 
 /* ===== PLAYER ===== */
 function openMovie(id) {
-  const m = getAllMovies().find(x => x.id === id);
+  var m = getAllMovies().find(function(x) { return x.id === id; });
   if (!m) return;
   currentId = id;
   document.getElementById('modalTopTitle').textContent = m.title;
   document.getElementById('modalMovieTitle').textContent = m.title;
   document.getElementById('modalBadge').textContent = m.label;
-  const badgeCls = 'modal-badge' + (m.genre === 'drama' ? ' drama' : '') + (m.genre === 'fantastik' ? ' fantastik' : '');
-  document.getElementById('modalBadge').className = badgeCls;
+  var bc = 'modal-badge' + (m.genre === 'drama' ? ' drama' : '') + (m.genre === 'fantastik' ? ' fantastik' : '');
+  document.getElementById('modalBadge').className = bc;
   document.getElementById('modalDesc').textContent = m.desc;
   document.getElementById('ytPlayer').src = 'https://www.youtube-nocookie.com/embed/' + m.ytId + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&fs=1';
   updateFavBtn();
@@ -470,37 +589,37 @@ function closeModal() {
 }
 
 function openYoutube() {
-  const m = getAllMovies().find(x => x.id === currentId);
+  var m = getAllMovies().find(function(x) { return x.id === currentId; });
   if (m) window.open(m.url, '_blank');
 }
 
 /* ===== SEVIMLILAR ===== */
 function toggleFav() {
   if (currentId === null) return;
-  const i = favs.indexOf(currentId);
+  var i = favs.indexOf(currentId);
   if (i === -1) favs.push(currentId); else favs.splice(i, 1);
-  localStorage.setItem('uzfavs6', JSON.stringify(favs));
+  localStorage.setItem('uzfavs7', JSON.stringify(favs));
   updateFavBtn();
 }
 function updateFavBtn() {
   document.getElementById('favBtn').textContent = favs.includes(currentId) ? '❤️' : '♡';
 }
 function loadFavs() {
-  const list = getAllMovies().filter(m => favs.includes(m.id));
+  var list = getAllMovies().filter(function(m) { return favs.indexOf(m.id) !== -1; });
   document.getElementById('favGrid').innerHTML = list.map(cardHTML).join('');
   document.getElementById('noFavs').style.display = list.length ? 'none' : 'block';
 }
 
 /* ===== SAHIFALAR ===== */
 function showPage(name, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(b) { b.classList.remove('active'); });
   document.getElementById('page-' + name).classList.add('active');
   if (btn) btn.classList.add('active');
   window.scrollTo(0, 0);
 }
 function toggleSearch() {
-  const bar = document.getElementById('searchBar');
+  var bar = document.getElementById('searchBar');
   bar.classList.toggle('active');
   if (bar.classList.contains('active')) document.getElementById('searchInput').focus();
 }
@@ -509,8 +628,91 @@ function focusSearch() {
   setTimeout(function() { document.getElementById('searchInput').focus(); }, 100);
 }
 
+/* ===== KUNDUZGI / KECHKI REJIM ===== */
+function toggleTheme() {
+  var btn = document.getElementById('themeToggle');
+  btn.classList.toggle('light');
+  if (btn.classList.contains('light')) {
+    document.documentElement.classList.add('light');
+    localStorage.setItem('uztheme', 'light');
+  } else {
+    document.documentElement.classList.remove('light');
+    localStorage.setItem('uztheme', 'dark');
+  }
+}
+/* Saqlangan rejimni yuklash */
+(function() {
+  if (localStorage.getItem('uztheme') === 'light') {
+    document.getElementById('themeToggle').classList.add('light');
+    document.documentElement.classList.add('light');
+  }
+})();
+
 /* ============================================= */
-/*              ADMIN PANEL FUNKSIYALARI          */
+/*          VIDEO O'CHIRISH FUNKSIYASI           */
+/* ============================================= */
+
+/* O'chirishni so'rash - tasdiqlash modali ochiladi */
+function askDelete(id) {
+  var m = getAllMovies().find(function(x) { return x.id === id; });
+  if (!m) return;
+  deleteTargetId = id;
+  document.getElementById('confirmText').innerHTML = '<strong>"' + m.title + '"</strong> kinoni o\'chirmoqchimisiz?<br>Bu amalni qaytarib bo\'lmaydi.';
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+
+/* Tasdiqlash modalini yopish */
+function closeConfirm() {
+  document.getElementById('confirmOverlay').classList.remove('open');
+  deleteTargetId = null;
+}
+
+/* Tasdiqlanganidan keyin o'chirish */
+function confirmDelete() {
+  if (deleteTargetId === null) return;
+  var id = deleteTargetId;
+  closeConfirm();
+
+  var m = getAllMovies().find(function(x) { return x.id === id; });
+  var title = m ? m.title : 'Kino';
+
+  /* Default kino ekanligini tekshirish */
+  var isDef = DEFAULT_MOVIES.some(function(d) { return d.id === id; });
+
+  if (isDef) {
+    /* Default kino: ro'yxatdan o'chirish (removedDefaults ga qo'shish) */
+    if (removedDefaults.indexOf(id) === -1) {
+      removedDefaults.push(id);
+    }
+  } else {
+    /* Custom kino: customMovies dan o'chirish */
+    customMovies = customMovies.filter(function(x) { return x.id !== id; });
+  }
+
+  /* Sevimlilardan ham o'chirish */
+  favs = favs.filter(function(f) { return f !== id; });
+  localStorage.setItem('uzfavs7', JSON.stringify(favs));
+
+  /* Saqlash */
+  localStorage.setItem('uzmovies7', JSON.stringify({ custom: customMovies, removedDefaults: removedDefaults }));
+
+  /* Agar ochiq playerning o'chirilayotgan kino bo'lsa, yopish */
+  if (currentId === id) { closeModal(); }
+
+  /* Hamma narsani yangilash */
+  refreshAll();
+  renderAdminList();
+
+  showToast('"' + title + '" o\'chirildi', 'success');
+}
+
+/* Admin paneldagi o'chirish ham shu funksiyadan foydalanadi */
+function adminDelete(id) {
+  askDelete(id);
+}
+
+/* ============================================= */
+/*              ADMIN PANEL                      */
 /* ============================================= */
 
 function openAdmin() {
@@ -564,7 +766,6 @@ function clearForm() {
   document.getElementById('linkPreview').classList.remove('show');
 }
 
-/* Link preview — yozilganida darhol rasm ko'rsatadi */
 function previewLink(val) {
   var ytId = extractYtId(val);
   var el = document.getElementById('linkPreview');
@@ -578,7 +779,6 @@ function previewLink(val) {
   }
 }
 
-/* YANGI KINO QO'SHISH — faqat customMovies ga tushadi, eski kinolar o'zgarmaydi */
 function addMovie() {
   var link = document.getElementById('adminYtLink').value.trim();
   var title = document.getElementById('adminTitle').value.trim();
@@ -591,13 +791,9 @@ function addMovie() {
   var ytId = extractYtId(link);
   if (!ytId) { showToast('YouTube link noto\'g\'ri!', 'error'); return; }
 
-  /* Takroriy video tekshirish */
   var all = getAllMovies();
   for (var i = 0; i < all.length; i++) {
-    if (all[i].ytId === ytId) {
-      showToast('Bu video allaqachon mavjud!', 'error');
-      return;
-    }
+    if (all[i].ytId === ytId) { showToast('Bu video allaqachon mavjud!', 'error'); return; }
   }
 
   var newMovie = {
@@ -612,49 +808,37 @@ function addMovie() {
   };
 
   customMovies.push(newMovie);
-  localStorage.setItem('uzmovies6', JSON.stringify(customMovies));
+  localStorage.setItem('uzmovies7', JSON.stringify({ custom: customMovies, removedDefaults: removedDefaults }));
 
-  /* Bosh sahifa, hero, statistika — hammasi yangilanadi */
   refreshAll();
   renderAdminList();
   clearForm();
   showToast('"' + title + '" qo\'shildi!', 'success');
 }
 
-/* FAQAT YANGI QO'SHILGAN KINOLARNI O'CHIRISH — eski 12 ta himoyalangan */
-function deleteMovie(id) {
-  var m = customMovies.find(function(x) { return x.id === id; });
-  if (!m) return;
-  customMovies = customMovies.filter(function(x) { return x.id !== id; });
-  localStorage.setItem('uzmovies6', JSON.stringify(customMovies));
-  favs = favs.filter(function(f) { return f !== id; });
-  localStorage.setItem('uzfavs6', JSON.stringify(favs));
-  refreshAll();
-  renderAdminList();
-  showToast('"' + m.title + '" o\'chirildi', '');
-}
-
-/* Admin paneldagi ro'yxat — faqat yangi qo'shilganlar */
+/* Admin panelda BARCHA kinolar ro'yxati - har birini o'chirish mumkin */
 function renderAdminList() {
-  document.getElementById('adminCount').textContent = customMovies.length;
+  var all = getAllMovies();
+  document.getElementById('adminCount').textContent = all.length;
   var el = document.getElementById('adminMovieList');
-  if (!customMovies.length) {
-    el.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">Hali kino qo\'shilmagan</div>';
+  if (!all.length) {
+    el.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">Hech qanday kino yo\'q</div>';
     return;
   }
-  el.innerHTML = customMovies.map(function(m) {
+  el.innerHTML = all.map(function(m) {
+    var tag = m.isDefault !== false ? '<span style="font-size:9px;color:var(--gold);margin-left:4px">★ asl</span>' : '';
     return '<div class="admin-movie-item">' +
       '<div class="admin-movie-thumb"><img src="' + thumb(m.ytId) + '" alt=""></div>' +
       '<div class="admin-movie-info">' +
-        '<div class="admin-movie-name">' + m.title + '</div>' +
+        '<div class="admin-movie-name">' + m.title + tag + '</div>' +
         '<div class="admin-movie-genre">' + m.label + '</div>' +
       '</div>' +
-      '<button class="admin-movie-del" onclick="deleteMovie(' + m.id + ')" title="O\'chirish">🗑</button>' +
+      '<button class="admin-movie-del" onclick="adminDelete(' + m.id + ')" title="O\'chirish">🗑</button>' +
     '</div>';
   }).join('');
 }
 
-/* Toast xabarnoma */
+/* Toast */
 function showToast(msg, type) {
   var t = document.getElementById('adminToast');
   t.textContent = msg;
@@ -664,10 +848,9 @@ function showToast(msg, type) {
   t._timer = setTimeout(function() { t.classList.remove('show'); }, 2200);
 }
 
-/* Overlay ga bosilganda yopish */
-document.getElementById('adminOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeAdmin();
-});
+/* Overlay larni bosib yopish */
+document.getElementById('adminOverlay').addEventListener('click', function(e) { if (e.target === this) closeAdmin(); });
+document.getElementById('confirmOverlay').addEventListener('click', function(e) { if (e.target === this) closeConfirm(); });
 
 /* ===== ISHGA TUSHIRISH ===== */
 refreshAll();
